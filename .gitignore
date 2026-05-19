@@ -1,0 +1,37 @@
+# Build
+/bin/
+/dist/
+*.exe
+*.test
+*.out
+coverage.out
+
+# Go
+/vendor/
+
+# Env & secrets (ne jamais committer)
+.env
+.env.*
+!.env.example
+.env.local
+.env.production
+*.pem
+*.key
+credentials.json
+secrets/
+data/
+*.db
+*.db-*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker overrides
+docker-compose.override.yml

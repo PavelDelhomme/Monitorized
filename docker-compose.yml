@@ -1,0 +1,45 @@
+# Monitorized — déploiement VPS
+# Usage: cp .env.example .env && docker compose up -d
+
+services:
+  monitorized:
+    build: .
+    container_name: monitorized
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      # Exposer uniquement en local ; mettre NPM devant en production
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - monitorized_data:/data
+      # Socket Docker lecture seule
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Logs Nginx Proxy Manager (adapter le chemin sur votre VPS)
+      - npm_data:/data/logs:ro
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:size=32M,mode=1777
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 128M
+        reservations:
+          memory: 32M
+
+volumes:
+  monitorized_data:
+  # Remplacer par le volume réel de NPM si différent
+  npm_data:
+    external: true
+    name: npm_data

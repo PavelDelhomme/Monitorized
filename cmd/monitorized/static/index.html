@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Monitorized</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div id="login" class="panel center">
+    <h1>Monitorized</h1>
+    <p class="muted">Monitoring VPS · Docker · NPM</p>
+    <form id="login-form">
+      <input type="text" name="username" placeholder="Utilisateur" autocomplete="username" required />
+      <input type="password" name="password" placeholder="Mot de passe" autocomplete="current-password" required />
+      <button type="submit">Connexion</button>
+    </form>
+    <p id="login-error" class="error hidden"></p>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <header>
+      <h1>Monitorized</h1>
+      <nav class="tabs">
+        <button type="button" class="tab active" data-tab="overview">Vue d'ensemble</button>
+        <button type="button" class="tab" data-tab="compromise">Compromission</button>
+      </nav>
+      <button id="logout" type="button">Déconnexion</button>
+    </header>
+
+    <main id="tab-overview" class="grid tab-panel">
+      <section class="card" id="host-card">
+        <h2>Serveur</h2>
+        <div id="host-metrics" class="metrics"></div>
+        <canvas id="cpu-chart" height="80"></canvas>
+      </section>
+      <section class="card">
+        <h2>Conteneurs Docker</h2>
+        <div id="containers" class="table-wrap"></div>
+      </section>
+      <section class="card">
+        <h2>Trafic NPM (24h)</h2>
+        <div id="npm-stats" class="metrics"></div>
+      </section>
+      <section class="card wide">
+        <h2>Alertes</h2>
+        <ul id="alerts"></ul>
+      </section>
+    </main>
+
+    <main id="tab-compromise" class="tab-panel hidden compromise-page">
+      <section class="card wide">
+        <div class="section-head">
+          <div>
+            <h2>Veille compromission</h2>
+            <p class="muted small">100&nbsp;% gratuit — aucune clé API payante · tout se gère ici</p>
+          </div>
+          <button type="button" id="scan-now" class="btn-primary">Lancer le scan</button>
+        </div>
+        <div id="providers-grid" class="providers-grid"></div>
+        <div id="compromise-summary" class="metrics"></div>
+      </section>
+
+      <section class="card wide">
+        <h3>Cibles surveillées</h3>
+        <div class="targets-toolbar">
+          <button type="button" class="filter-btn active" data-filter="all">Tous <span id="count-all">0</span></button>
+          <button type="button" class="filter-btn" data-filter="email">Emails <span id="count-email">0</span></button>
+          <button type="button" class="filter-btn" data-filter="domain">Domaines <span id="count-domain">0</span></button>
+          <button type="button" class="filter-btn" data-filter="ip">IP <span id="count-ip">0</span></button>
+          <input type="search" id="target-search" placeholder="Rechercher une cible…" />
+        </div>
+
+        <div class="add-row">
+          <select id="add-kind">
+            <option value="email">Email</option>
+            <option value="domain">Domaine</option>
+            <option value="ip">IP</option>
+          </select>
+          <input type="text" id="add-value" placeholder="ex: admin@delhomme.ovh ou n8n.delhomme.ovh" />
+          <button type="button" id="add-one">+ Ajouter</button>
+        </div>
+
+        <label class="bulk-label">Import en masse — une cible par ligne (autant que tu veux)</label>
+        <textarea id="bulk-import" rows="8" placeholder="admin@delhomme.ovh
+contact@mondomaine.fr
+delhomme.ovh
+n8n.delhomme.ovh
+ip:203.0.113.42"></textarea>
+        <button type="button" id="bulk-submit" class="btn-primary">Importer toutes les lignes</button>
+        <p id="bulk-result" class="muted small hidden"></p>
+
+        <div class="table-wrap targets-table-wrap">
+          <table id="targets-table">
+            <thead>
+              <tr><th>Type</th><th>Valeur</th><th>Source</th><th></th></tr>
+            </thead>
+            <tbody id="targets-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card wide">
+        <h3>Résultats des scans</h3>
+        <ul id="compromise-findings" class="findings-list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
