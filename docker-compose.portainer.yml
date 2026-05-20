@@ -1,0 +1,65 @@
+# Monitorized — stack Portainer production
+#
+# Dans Portainer :
+# 1. Stacks > Add stack > Repository
+# 2. Repository URL: https://github.com/PavelDelhomme/Monitorized
+# 3. Compose path: docker-compose.portainer.yml
+# 4. Env vars: coller le contenu de ton vrai .env (pas .env.example)
+# 5. Webhook: activer si tu veux utiliser `make deploy-portainer`
+
+name: monitorized
+
+services:
+  monitorized:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: monitorized:latest
+    container_name: monitorized
+    restart: unless-stopped
+    env_file:
+      - .env
+    expose:
+      - "8080"
+    ports:
+      # Fallback local seulement. Si NPM est sur le même réseau Docker,
+      # tu peux supprimer ce port dans Portainer et utiliser expose + réseau.
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - monitorized_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${NPM_LOGS_HOST_PATH:-/opt/npm/data/logs}:/data/logs:ro
+    networks:
+      - monitorized_internal
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:size=32M,mode=1777
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 128M
+        reservations:
+          memory: 32M
+
+volumes:
+  monitorized_data:
+
+networks:
+  monitorized_internal:
+    driver: bridge

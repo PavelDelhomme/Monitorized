@@ -1,6 +1,7 @@
 # Build
 /bin/
 /dist/
+/logs/
 *.exe
 *.test
 *.out
@@ -13,6 +14,7 @@ coverage.out
 .env
 .env.*
 !.env.example
+!.env.production.example
 .env.local
 .env.production
 *.pem

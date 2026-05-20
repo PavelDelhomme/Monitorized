@@ -31,6 +31,33 @@ make run
 
 Ouvrir [http://127.0.0.1:8080](http://127.0.0.1:8080)
 
+## Commandes Make
+
+```bash
+make help          # liste toutes les cibles
+make secrets       # génère mot de passe admin + JWT fort
+make env-prod      # crée .env depuis le modèle production
+make status        # état projet + docker + API + ressources
+make status-live   # status rafraîchi toutes les 2s (Ctrl+C)
+make logs          # logs live du conteneur monitorized
+make logs-live     # logs live de toute la stack compose
+make logs-save     # export logs → logs/monitorized-YYYYMMDD-HHMMSS.log
+make up-build      # rebuild + démarre docker
+make health        # ping /health
+make save MSG="..." # commit + push (refuse .env/secrets)
+make deploy-portainer PORTAINER_WEBHOOK_URL=... # push + redeploy
+```
+
+## Production Portainer
+
+Guide complet : [docs/PRODUCTION.md](docs/PRODUCTION.md)
+
+Fichiers utiles :
+
+- `.env.production.example` — modèle prod commenté
+- `docker-compose.portainer.yml` — stack Git pour Portainer
+- `deploy/portainer.env.example` — variables stack Portainer
+
 ## Docker (VPS)
 
 1. Copier `.env` et configurer les secrets.
@@ -39,7 +66,8 @@ Ouvrir [http://127.0.0.1:8080](http://127.0.0.1:8080)
 4. Placer **Nginx Proxy Manager** devant avec HTTPS + authentification supplémentaire recommandée.
 
 ```bash
-# Générer un secret JWT
+make secrets
+# ou manuellement :
 openssl rand -base64 48
 ```
 
